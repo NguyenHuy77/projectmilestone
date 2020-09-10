@@ -11,7 +11,7 @@ import ContactForm from './pages/ContactForm';
 import Header from './Header';
 import LoginChange from './pages/LoginChange';
 import RegisterChange from './pages/RegisterChange';
-
+import Admin from './pages/Admin';
 
 
 
@@ -32,6 +32,7 @@ function App() {
           </Route>
           
           <Route path ="/contactform" component ={ContactForm}/>
+          <Route path ="/Admin" component ={Admin}/>
         </Switch>
         <Contact/>
       </Router>

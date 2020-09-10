@@ -18,6 +18,7 @@ export default class LoginChange extends React.Component {
         // this.props.logout();
 
         this.state = {
+            admin:"",
             email: "",
             password: "",
             submitted: false,
@@ -32,6 +33,11 @@ export default class LoginChange extends React.Component {
         this.setState({ [name]: value });
     }
     getInfo() {
+        if(this.state.email === "admin" && this.state.password === "admin")
+        {
+            this.setState({admin:"admin"});
+            return;
+        }
         let myUrl = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users';
         fetch(myUrl)
             .then(res => res.json())
@@ -56,6 +62,10 @@ export default class LoginChange extends React.Component {
             })
     }
     reDirecting() {
+        if(this.state.admin === "admin")
+        {
+            return <Redirect to={"/Admin"} />
+        }
         if (this.state.myuser !== undefined) {
             return <Redirect to={"/Profile/" + this.state.myuser.userName} />
         }
