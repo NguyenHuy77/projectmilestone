@@ -21,9 +21,6 @@ export default class ApList extends React.Component {
         fetch(url)
             .then(response => response.json())
             .then(data => {          
-                let events=[]
-                data = data.filter(a => a.guest_name === this.props.userName)    
-                
                 this.setState({aps:data})
             })
     }
@@ -48,7 +45,7 @@ export default class ApList extends React.Component {
     // Start the component with the mentioned method
     componentDidMount() {
         this.fetchData()
-        console.log("in ad list")
+        
     }
 
     render() {

@@ -28,10 +28,12 @@ export default class OneAp extends React.Component {
                                 className="btn btn-success"
                                 color="deep-orange">  Edit </button>
                             </Link>
+                            <Link to ={"Admin"}>
                             <button 
                                 type="button" 
                                 className="btn btn-danger" 
                                 onClick ={this.props.deleteFunction.bind(this,this.props.appointmentId)}> Delete</button>
+                            </Link>
                         </MDBModalFooter>
                     </div>
                 </div>
