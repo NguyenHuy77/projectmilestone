@@ -13,7 +13,12 @@ export default class Admin extends Component {
     render() {
         return (
             <div>
-                <ApList/>
+                <div className ="row">
+                    <div className ="col">
+                        <h1>Welcome to the Administrator Site</h1>
+                    </div>
+                </div>
+                <ApList admin ={"admin"}/>
             </div>
         )
     }

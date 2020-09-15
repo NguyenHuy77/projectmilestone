@@ -11,6 +11,7 @@ export default class ApList extends React.Component {
         this.fetchData = this.fetchData.bind(this)
         this.state = {
              aps:[],
+             refresh:false
     
         }
     }
@@ -36,12 +37,41 @@ export default class ApList extends React.Component {
             method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
         })
             .then(response => {
-                
+                this.setState({refresh:true})
                 alert("You have successfully deleted an appointment");
             })
         }
     }
 
+    // This method is called within the OneAp component to approve appointment
+    approveFunction(value)
+    {
+        var confirmation = window.confirm("Do you want to approve this appointment?")
+        if(confirmation=== true)
+        {
+        var url = "https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/appointments/" +value
+
+        fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'put',
+            body: JSON.stringify({
+                status: "Approved"
+            })
+        })
+
+        const response = fetch(url, {
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            
+        })
+            .then(response => {
+                this.setState({refresh:true})
+                alert("You have successfully approved an appointment");
+            })
+        }
+    }
     // Start the component with the mentioned method
     componentDidMount() {
         this.fetchData()
@@ -68,7 +98,10 @@ export default class ApList extends React.Component {
                         location={a.location} 
                         time={a.meetingdate} 
                         avatar={a.avatar}
-                        deleteFunction = {this.deleteFunction}/>
+                        status={a.status}
+                        deleteFunction = {this.deleteFunction}
+                        approveFunction = {this.approveFunction}
+                        admin = {this.props.admin}/>
                     </Link>
                     )}
                             </div>
