@@ -9,7 +9,7 @@ import {
     MDBInput,
 } from "mdbreact"
 import { Link, Redirect } from "react-router-dom"
-
+import { docClient } from './backend'
 export default class LoginChange extends React.Component {
     constructor(props) {
         super(props);
@@ -18,7 +18,7 @@ export default class LoginChange extends React.Component {
         // this.props.logout();
 
         this.state = {
-            admin:"",
+            admin: "",
             email: "",
             password: "",
             submitted: false,
@@ -32,38 +32,57 @@ export default class LoginChange extends React.Component {
         const { name, value } = e.target;
         this.setState({ [name]: value });
     }
-    getInfo() {
-        if(this.state.email === "admin" && this.state.password === "admin")
-        {
-            this.setState({admin:"admin"});
-            return;
+    getInfo() {        
+        var params = {
+            TableName: 'users',
         }
-        let myUrl = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users';
-        fetch(myUrl)
-            .then(res => res.json())
-            .then(data => {
-                var user = data.find(e => e.email === this.state.email);
-                if (user !== undefined) {
-                    if(this.state.password == user.password)
-                    {
-                        this.setState({ myuser: user })
-                        alert("You have logged in successfully")
-                    }
-                    else
-                    {
-                        alert("Wrong password!")
-                    }
-                }
-                else
-                {
+        docClient.scan(params, function (err, data) {
+            if (err) {
+                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+            } else {
+                console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+                var user = data.Items.find(e => e.email === this.state.email);
+                if (user === undefined) {
                     alert("User does not exist!")
+                    return;
+                }
+                if (this.state.password == user.password) {
+                    this.setState({ myuser: user })
+                    alert("You have logged in successfully")
+                    return;
+                }
+                else {
+                    alert("Wrong password!")
+                    return;
                 }
 
-            })
+            }
+        }.bind(this));
+        // let myUrl = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users';
+        // fetch(myUrl)
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         var user = data.find(e => e.email === this.state.email);
+        //         if (user !== undefined) {
+        //             if(this.state.password == user.password)
+        //             {
+        //                 this.setState({ myuser: user })
+        //                 alert("You have logged in successfully")
+        //             }
+        //             else
+        //             {
+        //                 alert("Wrong password!")
+        //             }
+        //         }
+        //         else
+        //         {
+        //             alert("User does not exist!")
+        //         }
+
+        //     })
     }
     reDirecting() {
-        if(this.state.admin === "admin")
-        {
+        if (this.state.admin === "admin") {
             return <Redirect to={"/Admin"} />
         }
         if (this.state.myuser !== undefined) {

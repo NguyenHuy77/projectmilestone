@@ -1,6 +1,6 @@
 import React from 'react'
 import DateTimePicker from 'react-datetime-picker';
-
+import { docClient } from './backend'
 const myPut = "https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/appointments"
 export default class EditAppointment extends React.Component {
     constructor(props) {
@@ -19,26 +19,42 @@ export default class EditAppointment extends React.Component {
             building: 1,
             floor: 1,
             room: 1,
-            locations:[],
-            teachers:[]
+            locations: [],
+            teachers: []
         }
     }
 
     fetchAppointment() {
-        const { match: { params } } = this.props
-        fetch(myPut + "/" + params.appointmentId)
-            .then(response => response.json())
-            .then(json => {
-                this.setState({ oneApp: json })
-            })
-            .then(() => this.displayInfo())
+        const { match: { params } } = this.props; // Seperate params from props for easier future call        
+        var param = {}
+        var hashKey = { "id": params.appointmentId }
+        param.TableName = 'appointments'
+        param.Key = hashKey
+        console.log(params.userName)
+        docClient.get(param, function (err, data) {
+            if (err) {
+                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+            } else {
+                console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+                this.setState({
+                    oneApp: data.Item,
+                    title: data.Item.title,
+                    guest_name: data.Item.guest_name,
+                    meetingdate: data.Item.meetingdate,
+                    meeting_user: data.Item.meeting_user,
+                    note: data.Item.note,
+                    status: data.Item.status,
+                    location: data.Item.address,
+                })
+
+            }
+        }.bind(this));
     }
-    
     // Acessing data from API recall
     displayInfo() {
         // Spliting the location into different fields
         //var locationSplit = []
-       // locationSplit = this.state.oneApp.location.split(".")
+        // locationSplit = this.state.oneApp.location.split(".")
         var date = new Date(this.state.oneApp.meetingdate)
         this.setState({
             title: this.state.oneApp.title,
@@ -51,7 +67,7 @@ export default class EditAppointment extends React.Component {
             //room: locationSplit[2]
         })
     }
-    
+
     // Register changes to the state
     handleChange(event) {
         let obj = []
@@ -78,23 +94,31 @@ export default class EditAppointment extends React.Component {
     handleUpdate() {
         // Re-combining fields into one location field 
         // for easy update, not currently in use
-        var location = this.state.building + "." + this.state.floor + "." + this.state.room
-        fetch(myPut + '/' + this.state.oneApp.id, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+        //var location = this.state.building + "." + this.state.floor + "." + this.state.room
+        var params = {
+            TableName: "appointments",
+            Key: { "id": this.state.oneApp.id},
+            UpdateExpression: "set title = :t, meetingdate = :md, meeting_user = :mu, note = :n, address = :l",
+            ExpressionAttributeValues: {
+                ":t": this.state.title,
+                ":md": this.state.meetingdate,
+                ":mu": this.state.meeting_user,
+                ":n": this.state.note,
+                ":l": this.state.location,
             },
-            method: 'put',
-            body: JSON.stringify({
-                title: this.state.title,
-                meetingdate: this.state.meetingdate,
-                meeting_user: this.state.meeting_user,
-                note: this.state.note,
-                location: this.state.location
-            })
-        })
-            .then(() => this.fetchAppointment())
-        alert('The appointment has been successfully updated')
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            } else {
+                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                alert('The appointment has been successfully updated')
+                this.fetchAppointment()
+            }
+        }.bind(this));
+        
     }
 
     // Fetch the available teachers for people to choose from
@@ -135,7 +159,7 @@ export default class EditAppointment extends React.Component {
                         <input
                             type="text"
                             className="form-control"
-                            placeholder={this.state.title}
+                            placeholder={this.state.oneApp.title}
                             name="title"
                             onChange={this.handleChange.bind(this)}
                         />
@@ -143,15 +167,14 @@ export default class EditAppointment extends React.Component {
                     <div className="form-group">
                         <label htmlFor="date">Meeting Date</label>
                         <h3>Meeting Date</h3>
-                        <DateTimePicker  value ={this.state.meetingdate}
-                        onChange = {this.onChangeDate} />
+                        <DateTimePicker value={this.state.oneApp.meetingdate}
+                            onChange={this.onChangeDate} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="meetingperson">Meeting Person</label>
                         <select name="meeting_user" onChange={this.handleChange.bind(this)}>
                             {this.state.teachers.map(e => {
-                                if(e.name === this.state.meeting_user)
-                                {
+                                if (e.name === this.state.oneApp.meeting_user) {
                                     return <option value={e.name} selected>{e.name}</option>
                                 }
                                 return <option value={e.name}>{e.name}</option>
@@ -160,18 +183,16 @@ export default class EditAppointment extends React.Component {
                     </div>
                     <div className="form-group">
                         <h2>Location</h2>
-                        <select 
-                        onChange={this.handleChange.bind(this)} 
+                        <select
+                            onChange={this.handleChange.bind(this)}
                         >
                             {this.state.locations.map(e => {
-                                
-                                if(e.location === this.state.location)
-                                {
-                                    
+
+                                if (e.location === this.state.oneApp.address) {
+
                                     return <option value={e.location} selected>{e.location}</option>
                                 }
-                                else
-                                {
+                                else {
                                     return <option value={e.location}>{e.location}</option>
                                 }
                             })}
@@ -206,9 +227,20 @@ export default class EditAppointment extends React.Component {
                         <input
                             type="text"
                             className="form-control"
-                            placeholder={this.state.note}
+                            placeholder={this.state.oneApp.note}
                             name="note"
                             onChange={this.handleChange.bind(this)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="note">Status </label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder={this.state.oneApp.note}
+                            name="note"
+                            value ={this.state.oneApp.status}
+                            disabled
                         />
                     </div>
                 </form>

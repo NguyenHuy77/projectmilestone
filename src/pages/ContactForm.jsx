@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Redirect } from 'react-router-dom'
-
+import { docClient } from './backend'
+import { v4 as uuidv4 } from 'uuid'; // For version 4
 
 export default class ContactForm extends Component {
   constructor(props) {
@@ -33,23 +34,25 @@ export default class ContactForm extends Component {
     }
     var form =
     {
+      id: uuidv4(),
       name: this.state.name,
       email: this.state.email,
       message: this.state.message
     }
-    var url = "https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/contactform"
-    fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      method: 'post',
-      body: JSON.stringify(form)
-    })
-      .then(json => {
+    var params = {
+      TableName: "feedbacks",
+      Item: form
+    };
+    docClient.put(params, function (err, data) {
+
+      if (err) {
+        console.log("users::save::error - " + JSON.stringify(err, null, 2));
+      } else {
         alert('Your message has been sent to the System.')
         this.setState({ refresh: true })
-      })
+      }
+    }.bind(this))
+
   }
   resetPage() {
     if (this.state.refresh) {
@@ -58,64 +61,74 @@ export default class ContactForm extends Component {
   }
   render() {
     return (
-      <div className="container">
-        {this.resetPage()}
-        <form className="contact-form">
-          <div class="form-group">
-            <label for="name">
-              Name: <span className="text-danger pl-3">NAME IS REQUIRED</span>
-            </label>
-            <input
-              required
-              type="text"
-              class="form-control"
-              placeholder="Enter Your Name"
-              name="name"
-              onChange={this.handleChange.bind(this)}
-            ></input>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">
-              Email address:
+      <main className="bg-dark page landing-page" style={{ paddingTop: '50px' }}>
+        <section className="bg-dark clean-block clean-info dark">
+          <div className="container bg-dark">
+            <div className="block-heading">
+              <h2 className="text-monospace text-info">Contact Form</h2>
+              <div className="container">
+                {this.resetPage()}
+                <form className="contact-form">
+                  <div class="form-group">
+                    <label for="name">
+                      Name: <span className="text-danger pl-3">NAME IS REQUIRED</span>
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Your Name"
+                      name="name"
+                      onChange={this.handleChange.bind(this)}
+                    ></input>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">
+                      Email address:
             <span className="text-danger pl-3"> EMAIL IS REQUIRED</span>
-            </label>
-            <input
-              required
-              type="email"
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-              placeholder="Enter email"
-              name="email"
-              onChange={this.handleChange.bind(this)}
-            ></input>
-            <small id="emailHelp" class="form-text text-muted">
-              We'll never share your email with anyone else.
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      class="form-control"
+                      id="exampleInputEmail1"
+                      aria-describedby="emailHelp"
+                      placeholder="Enter email"
+                      name="email"
+                      onChange={this.handleChange.bind(this)}
+                    ></input>
+                    <small id="emailHelp" class="form-text text-muted">
+                      We'll never share your email with anyone else.
           </small>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleFormControlTextarea1">
+                      Message{" "}
+                      <span className="text-danger pl-3"> MESSAGE IS REQUIRED</span>
+                    </label>
+                    <textarea
+                      required
+                      class="form-control"
+                      id="exampleFormControlTextarea1"
+                      rows="3"
+                      name="message"
+                      onChange={this.handleChange.bind(this)}
+                    ></textarea>
+                  </div>
+                  <div
+                    onClick={this.createData.bind(this)}
+                    class="contact-btn btn"
+                    style={{ position: 'absolute' }}
+                  >
+                    SEND MESSAGE
+            </div>
+                </form>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="exampleFormControlTextarea1">
-              Message{" "}
-              <span className="text-danger pl-3"> MESSAGE IS REQUIRED</span>
-            </label>
-            <textarea
-              required
-              class="form-control"
-              id="exampleFormControlTextarea1"
-              rows="3"
-              name="message"
-              onChange={this.handleChange.bind(this)}
-            ></textarea>
-          </div>
-          <button
-            onClick={this.createData.bind(this)}
-            class="contact-btn btn"
-            style={{ position: 'absolute' }}
-          >
-            SEND MESSAGE
-            </button>
-        </form>
-      </div>
+        </section>
+      </main>
+
     )
   }
 }

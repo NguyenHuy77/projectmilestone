@@ -11,7 +11,7 @@ import {
 } from 'mdbreact';
 import { Link, Redirect } from 'react-router-dom'
 import Contact from './Contact';
-
+import {docClient} from './backend'
 const myPost = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users'
 export default class RegisterChange extends React.Component {
     constructor() {
@@ -45,27 +45,32 @@ export default class RegisterChange extends React.Component {
             alert('Something is missing')
         } else {
             let account = {
-                // Defining fields to be presented at the API
+                userid: this.state.userName,
                 userName: this.state.userName,
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 email: this.state.email,
-                password: this.state.password
+                password: this.state.password,
+                avatar: "undefined",
+                address: "undefined",
+                city:"undefined",
+                country: "undefined",
             }
-            console.log(account) // This command is to test whether the object above is created
-            // The Post method
-            fetch(myPost, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'post',
-                body: JSON.stringify(account)
+            //console.log(account)
+            var params = {
+                TableName: "users",
+                Item: account
+            };
+            docClient.put(params, function (err, data) {
+
+                if (err) {
+                    console.log("users::save::error - " + JSON.stringify(err, null, 2));
+                } else {
+                    console.log("users::save::success");
+                    alert("you have signed up successfully")
+                }
             })
-                .then(json => {
-                    alert('You have signed up successfully!')
-                    this.setState({ registered: true })
-                })
+            
         }
     }
 

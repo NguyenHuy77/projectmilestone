@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import DateTimePicker from 'react-datetime-picker';
+import {docClient} from './backend'
+import { v4 as uuidv4 } from 'uuid'; // For version 4
 export default class Appointment extends Component {
     constructor(props) {
         super(props)
@@ -102,33 +104,32 @@ export default class Appointment extends Component {
     fetchAppointmentCreate() {
         
         var input = {
+            id: uuidv4(),
             title: this.state.title,
             guest_name: this.props.guest_name,
-            meetingdate: this.state.meetingdate,
+            meetingdate: this.state.meetingdate.toString(),
             meeting_user: this.state.meeting_user,
             status: "OnProgress",
             note: this.state.note,
-            location: this.state.location
+            address: this.state.location
         }
-        var url = "https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/appointments"
-        const response = fetch(url, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            //ode: 'cors', // no-cors, *cors, same-origin
-            //cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            //credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            //redirect: 'follow', // manual, *follow, error
-            //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(input) // body data type must match "Content-Type" header
-        })
-            .then(response => {
+        
+        //console.log(account)
+        var params = {
+            TableName: "appointments",
+            Item: input
+        };
+        docClient.put(params, function (err, data) {
+
+            if (err) {
+                console.log("users::save::error - " + JSON.stringify(err, null, 2));
+            } else {
                 this.resetState();
                 this.props.refreshProfile();
                 alert("You have successfully created an appointment")
-            })
+            }
+        }.bind(this))
+       
     }
     componentDidMount() {
         this.fetchTeachers()

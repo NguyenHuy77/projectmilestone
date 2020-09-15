@@ -30,11 +30,12 @@ export default class OneAp extends React.Component {
     }
     render() {
         return (
-            <div class="card clean-card text-left"><img class="img-thumbnail card-img-top w-100 d-block"
-                src={this.props.avatar} style={{ width: '328px', height: '220px' }} />
+            <div class="card clean-card text-left">
+                {/* <img class="img-thumbnail card-img-top w-100 d-block"
+                src={this.props.avatar} style={{ width: '328px', height: '220px' }} /> */}
                 <div class="card-body" >
                     {this.checkApproval()}
-                    <h5>{this.props.name}</h5>
+                    <h1>{this.props.title}</h1>
                     <p>Location: {this.props.location}</p>
                     <p>Time: {this.props.time} </p>
 
@@ -46,12 +47,12 @@ export default class OneAp extends React.Component {
                                 className="btn btn-success"
                                 color="deep-orange">Edit</button>
                             </Link>
-                            <Link to ={"Admin"}>
+
                             <button 
                                 type="button" 
                                 className="btn btn-danger" 
                                 onClick ={this.props.deleteFunction.bind(this,this.props.appointmentId)}>Delete</button>
-                            </Link>
+
                            {this.checkAdmin()}
                         </MDBModalFooter>
                     </div>

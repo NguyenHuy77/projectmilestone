@@ -45,7 +45,11 @@ export default class Register extends React.Component {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 email: this.state.email,
-                password: this.state.password
+                password: this.state.password,
+                avatar: "undefined",
+                address: "undefined",
+                city:"undefined",
+                country: "undefined",
             }
             console.log(account)
             fetch(myPost, {
