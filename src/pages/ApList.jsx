@@ -54,6 +54,7 @@ export default class ApList extends React.Component {
                     console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
                 } else {
                     console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
+                    alert("You have successfully deleted the appointment.")
                     this.fetchData()
                 }
             }.bind(this));
@@ -67,10 +68,11 @@ export default class ApList extends React.Component {
         var params = {
             TableName: "appointments",
             Key: { "id": value },
-            UpdateExpression: "set status = :s",
+            UpdateExpression: "set stat = :s",
             ExpressionAttributeValues: {
                 ":s": "Approved"
-            }
+            },
+            ReturnValues: "UPDATED_NEW"
         };
 
         docClient.update(params, function (err, data) {
@@ -78,6 +80,7 @@ export default class ApList extends React.Component {
                 console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
             } else {
                 console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                alert("You have successfully approved the appointment.")
                 this.fetchData()
             }
         }.bind(this));
@@ -126,9 +129,9 @@ export default class ApList extends React.Component {
                                             location={a.address}
                                             time={a.meetingdate}
                                             avatar={a.avatar}
-                                            status={a.status}
-                                            deleteFunction={this.deleteFunction}
-                                            approveFunction={this.approveFunction}
+                                            status={a.stat}
+                                            deleteFunction={this.deleteFunction.bind(this)}
+                                            approveFunction={this.approveFunction.bind(this)}
                                             admin={this.props.admin} />
                                     </div>
                                 )}

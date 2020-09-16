@@ -9,23 +9,19 @@ export default class OneAp extends React.Component {
 
         }
     }
-    checkApproval()
-    {
-        if(this.props.status ==="Approved")
-        {
+    checkApproval() {
+        if (this.props.status === "Approved") {
             return <h1>Approved</h1>
         }
     }
-    checkAdmin()
-    {
-        if(this.props.admin === "admin")
-        {
-            return ( <Link to ={"Admin"}>
-            <button 
-                type="button" 
-                className="btn btn-warning" 
-                onClick ={this.props.approveFunction.bind(this,this.props.appointmentId)}>Approve</button>
-            </Link>)
+    checkAdmin() {
+        if (this.props.userName === "admin") {
+            return (
+                <button
+                    type="button"
+                    className="btn btn-warning"
+                    onClick={this.props.approveFunction.bind(this, this.props.appointmentId)}>Approve</button>
+            )
         }
     }
     render() {
@@ -38,22 +34,22 @@ export default class OneAp extends React.Component {
                     <h1>{this.props.title}</h1>
                     <p>Location: {this.props.location}</p>
                     <p>Time: {this.props.time} </p>
-
+                    <p>Status: {this.props.status} </p>
                     <div>
                         <MDBModalFooter className="justify-content-center">
                             <Link to={"/Profile/" + this.props.userName + "/" + this.props.appointmentId}>
-                                <button 
-                                type="button" 
-                                className="btn btn-success"
-                                color="deep-orange">Edit</button>
+                                <button
+                                    type="button"
+                                    className="btn btn-success"
+                                    color="deep-orange">Edit</button>
                             </Link>
 
-                            <button 
-                                type="button" 
-                                className="btn btn-danger" 
-                                onClick ={this.props.deleteFunction.bind(this,this.props.appointmentId)}>Delete</button>
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={this.props.deleteFunction.bind(this, this.props.appointmentId)}>Delete</button>
 
-                           {this.checkAdmin()}
+                            {this.checkAdmin()}
                         </MDBModalFooter>
                     </div>
                 </div>

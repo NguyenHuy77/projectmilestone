@@ -109,7 +109,7 @@ export default class Appointment extends Component {
             guest_name: this.props.guest_name,
             meetingdate: this.state.meetingdate.toString(),
             meeting_user: this.state.meeting_user,
-            status: "OnProgress",
+            stat: "OnProgress",
             note: this.state.note,
             address: this.state.location
         }

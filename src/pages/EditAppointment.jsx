@@ -43,7 +43,7 @@ export default class EditAppointment extends React.Component {
                     meetingdate: data.Item.meetingdate,
                     meeting_user: data.Item.meeting_user,
                     note: data.Item.note,
-                    status: data.Item.status,
+                    status: data.Item.stat,
                     location: data.Item.address,
                 })
 
