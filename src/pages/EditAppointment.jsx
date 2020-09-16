@@ -1,6 +1,8 @@
 import React from 'react'
 import DateTimePicker from 'react-datetime-picker';
 import { docClient } from './backend'
+import SimpleReactValidator from 'simple-react-validator'
+
 const myPut = "https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/appointments"
 export default class EditAppointment extends React.Component {
     constructor(props) {
@@ -22,6 +24,7 @@ export default class EditAppointment extends React.Component {
             locations: [],
             teachers: []
         }
+        this.validator = new SimpleReactValidator({ autoForceUpdate: this })
     }
 
     fetchAppointment() {
@@ -95,30 +98,33 @@ export default class EditAppointment extends React.Component {
         // Re-combining fields into one location field 
         // for easy update, not currently in use
         //var location = this.state.building + "." + this.state.floor + "." + this.state.room
-        var params = {
-            TableName: "appointments",
-            Key: { "id": this.state.oneApp.id},
-            UpdateExpression: "set title = :t, meetingdate = :md, meeting_user = :mu, note = :n, address = :l",
-            ExpressionAttributeValues: {
-                ":t": this.state.title,
-                ":md": this.state.meetingdate,
-                ":mu": this.state.meeting_user,
-                ":n": this.state.note,
-                ":l": this.state.location,
-            },
-            ReturnValues: "UPDATED_NEW"
-        };
+        if (this.validator.allValid()) {
+            var params = {
+                TableName: "appointments",
+                Key: { "id": this.state.oneApp.id },
+                UpdateExpression: "set title = :t, meetingdate = :md, meeting_user = :mu, note = :n, address = :l",
+                ExpressionAttributeValues: {
+                    ":t": this.state.title,
+                    ":md": this.state.meetingdate,
+                    ":mu": this.state.meeting_user,
+                    ":n": this.state.note,
+                    ":l": this.state.location,
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
 
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-            } else {
-                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-                alert('The appointment has been successfully updated')
-                this.fetchAppointment()
-            }
-        }.bind(this));
-        
+            docClient.update(params, function (err, data) {
+                if (err) {
+                    console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                } else {
+                    console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                    alert('The appointment has been successfully updated')
+                    this.fetchAppointment()
+                }
+            }.bind(this));
+        } else {
+            this.validator.showMessages()
+        }
     }
 
     // Fetch the available teachers for people to choose from
@@ -163,6 +169,7 @@ export default class EditAppointment extends React.Component {
                             name="title"
                             onChange={this.handleChange.bind(this)}
                         />
+                        {this.validator.message('title', this.state.title, ['required', { max: 50 }, { min: 5 }])}
                     </div>
                     <div className="form-group">
                         <label htmlFor="date">Meeting Date</label>
@@ -239,7 +246,7 @@ export default class EditAppointment extends React.Component {
                             className="form-control"
                             placeholder={this.state.oneApp.note}
                             name="note"
-                            value ={this.state.oneApp.status}
+                            value={this.state.oneApp.status}
                             disabled
                         />
                     </div>
