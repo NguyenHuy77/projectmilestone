@@ -11,7 +11,9 @@ import {
 } from 'mdbreact';
 import { Link, Redirect } from 'react-router-dom'
 import Contact from './Contact';
-import {docClient} from './backend'
+import { docClient } from './backend'
+import SimpleReactValidator from 'simple-react-validator'
+
 const myPost = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users'
 export default class RegisterChange extends React.Component {
     constructor() {
@@ -24,6 +26,7 @@ export default class RegisterChange extends React.Component {
             password: '',
             registered: false
         }
+        this.validator = new SimpleReactValidator({ autoForceUpdate: this })
     }
 
     // Register changes to the state
@@ -36,14 +39,7 @@ export default class RegisterChange extends React.Component {
     // Perform a Post method to send data
     // to an API
     handleAdd() {
-        if (this.state.name === '' |
-            this.state.email === '' |
-            this.state.password === '' |
-            this.state.firstName === '' |
-            this.state.lastName === ''
-        ) {
-            alert('Something is missing')
-        } else {
+        if (this.validator.allValid()) {
             let account = {
                 userid: this.state.userName,
                 userName: this.state.userName,
@@ -53,7 +49,7 @@ export default class RegisterChange extends React.Component {
                 password: this.state.password,
                 avatar: "undefined",
                 address: "undefined",
-                city:"undefined",
+                city: "undefined",
                 country: "undefined",
             }
             //console.log(account)
@@ -70,7 +66,8 @@ export default class RegisterChange extends React.Component {
                     alert("you have signed up successfully")
                 }
             })
-            
+        } else {
+            this.validator.showMessages()
         }
     }
 
@@ -123,6 +120,7 @@ export default class RegisterChange extends React.Component {
                                         success='right'
                                         onChange={this.handleChange.bind(this)}
                                     />
+                                    {this.validator.message('userName', this.state.userName, 'required')}
                                     <MDBInput
                                         label='First name'
                                         icon='signature'
@@ -135,6 +133,7 @@ export default class RegisterChange extends React.Component {
                                         success='right'
                                         onChange={this.handleChange.bind(this)}
                                     />
+                                    {this.validator.message('firstName', this.state.firstName, 'required|alpha')}
                                     <MDBInput
                                         label='Last name'
                                         icon='signature'
@@ -147,6 +146,7 @@ export default class RegisterChange extends React.Component {
                                         success='right'
                                         onChange={this.handleChange.bind(this)}
                                     />
+                                    {this.validator.message('lastName', this.state.lastName, 'required|alpha')}
                                     <MDBInput
                                         label='Your email'
                                         icon='envelope'
@@ -159,6 +159,7 @@ export default class RegisterChange extends React.Component {
                                         success='right'
                                         onChange={this.handleChange.bind(this)}
                                     />
+                                    {this.validator.message('email', this.state.email, 'required|email')}
                                     <MDBInput
                                         label='Your password'
                                         icon='lock'
@@ -169,6 +170,7 @@ export default class RegisterChange extends React.Component {
                                         validate
                                         onChange={this.handleChange.bind(this)}
                                     />
+                                    {this.validator.message('password', this.state.password, 'required')}
                                 </form>
                             </MDBModalBody>
                             <MDBModalFooter className='justify-content-center'>
@@ -182,13 +184,10 @@ export default class RegisterChange extends React.Component {
                                 {this.refreshPage()}
                             </MDBModalFooter>
                         </div>
-
                         <div>
-
                         </div>
                     </div>
                 </div>
-                
             </div>
         )
     }
