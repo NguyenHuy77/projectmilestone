@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
 import DateTimePicker from 'react-datetime-picker';
-import {docClient} from './backend'
+import { docClient } from './backend'
 import { v4 as uuidv4 } from 'uuid'; // For version 4
+import SimpleReactValidator from 'simple-react-validator'
+import moment from 'moment'
+import { WindowScrollController } from '@fullcalendar/core';
+
+window.moment = moment
+
 export default class Appointment extends Component {
     constructor(props) {
         super(props)
@@ -17,10 +23,11 @@ export default class Appointment extends Component {
             building: 1,
             floor: 1,
             room: 1,
-            location:"",
+            location: "",
             teachers: [],
             locations: []
         }
+        this.validator = new SimpleReactValidator({ autoForceUpdate: this })
     }
     resetState() {
         this.setState({
@@ -34,7 +41,7 @@ export default class Appointment extends Component {
             building: 1,
             floor: 1,
             room: 1,
-            location:""
+            location: ""
         })
     }
     handleChangeTitle(event) {
@@ -102,7 +109,7 @@ export default class Appointment extends Component {
             })
     }
     fetchAppointmentCreate() {
-        
+
         var input = {
             id: uuidv4(),
             title: this.state.title,
@@ -113,23 +120,28 @@ export default class Appointment extends Component {
             note: this.state.note,
             address: this.state.location
         }
-        
-        //console.log(account)
-        var params = {
-            TableName: "appointments",
-            Item: input
-        };
-        docClient.put(params, function (err, data) {
 
-            if (err) {
-                console.log("users::save::error - " + JSON.stringify(err, null, 2));
-            } else {
-                this.resetState();
-                this.props.refreshProfile();
-                alert("You have successfully created an appointment")
-            }
-        }.bind(this))
-       
+        //console.log(account)
+        if (this.validator.allValid()) {
+            var params = {
+                TableName: "appointments",
+                Item: input
+            };
+            docClient.put(params, function (err, data) {
+
+                if (err) {
+                    console.log("users::save::error - " + JSON.stringify(err, null, 2));
+                } else {
+                    this.resetState();
+                    this.props.refreshProfile();
+                    alert("You have successfully created an appointment")
+                }
+            }.bind(this))
+        } else {
+            this.validator.showMessages()
+        }
+
+
     }
     componentDidMount() {
         this.fetchTeachers()
@@ -150,16 +162,24 @@ export default class Appointment extends Component {
                             name="title"
                             onChange={this.handleChangeTitle.bind(this)}
                         />
+                        {this.validator.message('title', this.state.title, ['required', { max: 50 }, { min: 5 }])}
                     </div>
 
                     <div className="form-group">
                         <h3>Meeting Date</h3>
-                         <DateTimePicker  value ={this.state.meetingdate}
-                        onChange = {this.onChangeDate} />
+                        <DateTimePicker value={this.state.meetingdate}
+                            onChange={this.onChangeDate} />
+                        {/* <input
+                            type='date'
+                            name='date'
+                            value={this.state.meetingdate}
+                            onChange={this.handleChangeMeetingDate.bind(this)}
+                        />
+                        {this.validator.message('date', moment(this.state.meetingdate), ['required', { after_or_equal: moment() }, { before: moment().add(7, 'day') }])} */}
                     </div>
                     <div className="form-group">
                         <h3>Meeting Person</h3>
-                         <select onChange={this.handleChangeMeetinUser.bind(this)}>
+                        <select onChange={this.handleChangeMeetinUser.bind(this)}>
                             {this.state.teachers.map(e => {
                                 return <option value={e.name}>{e.name}</option>
                             })}
@@ -183,7 +203,6 @@ export default class Appointment extends Component {
                             name="note"
                             onChange={this.handleChangeNote.bind(this)} />
                     </div>
-
                 </form>
                 <button className="btn btn-primary" onClick={this.fetchAppointmentCreate.bind(this)}>Make appointment</button>
             </div>

@@ -10,6 +10,8 @@ import RegisterChange from './RegisterChange';
 import { docClient } from './backend'
 import { parseMarker } from '@fullcalendar/core'
 import FeedbackList from './FeedbackList'
+import SimpleReactValidator from 'simple-react-validator'
+
 const myGet = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users'
 export default class Profile extends React.Component {
     constructor() {
@@ -30,6 +32,7 @@ export default class Profile extends React.Component {
             city: '',
             country: ''
         }
+        this.validator = new SimpleReactValidator({autoForceUpdate: this})
     }
 
     // Fetch the account using props passed down from the Login component
@@ -107,21 +110,21 @@ export default class Profile extends React.Component {
             ReturnValues: "UPDATED_NEW"
         };
         if (// Check if the needed fields are not empty
-            this.state.email !== '' &&
-            this.state.firstName !== '' &&
-            this.state.lastName !== ''
+            this.validator.fieldValid('email') &&
+            this.validator.fieldValid('firstName') &&
+            this.validator.fieldValid('lastName')
         ) {// The Put method will be as follow
             docClient.update(params, function (err, data) {
                 if (err) {
                     console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
                 } else {
-                    console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                    console.log("Update Item succeeded:", JSON.stringify(data, null, 2));
                     this.fectchAccount()
                 }
             }.bind(this));
             alert('The account has been successfully updated')
         } else {
-            alert('Please enter correct information')
+            this.validator.showMessages()
         }
     }
 
@@ -137,8 +140,7 @@ export default class Profile extends React.Component {
             ReturnValues: "UPDATED_NEW"
         };
         if (
-
-            this.state.avatar !== ''
+            this.validator.fieldValid('avatar')
         ) {
             docClient.update(params, function (err, data) {
                 if (err) {
@@ -150,7 +152,7 @@ export default class Profile extends React.Component {
             }.bind(this));
             alert('The avatar has been successfully updated')
         } else {
-            alert('Please enter avatar source')
+            this.validator.showMessages()
         }
     }
 
@@ -169,9 +171,9 @@ export default class Profile extends React.Component {
         console.log("Updating the item...");
 
         if (
-            this.state.password !== '' &&
-            this.state.npassword !== '' &&
-            this.state.cnpassword !== ''
+            this.validator.fieldValid('password') &&
+            this.validator.fieldValid('npassword') &&
+            this.validator.fieldValid('cnpassword')
         ) {
             if (this.state.password === this.state.user.password) {
                 if (this.state.npassword === this.state.cnpassword) {
@@ -191,7 +193,7 @@ export default class Profile extends React.Component {
                 alert('Check your password again')
             }
         } else {
-            alert('Please enter avatar source')
+            this.validator.showMessages()
         }
     }
     checkFeedBack()
@@ -231,6 +233,7 @@ export default class Profile extends React.Component {
                                                         name="avatar"
                                                         onChange={this.handleChange.bind(this)}
                                                     />
+                                                    {this.validator.message('avatar', this.state.avatar, 'required|url')}
                                                     <button className="btn btn-primary btn-sm" type="submit" onClick={this.handleUpdateAvatar.bind(this)}>Change Photo</button>
 
                                                 </div>
@@ -323,6 +326,7 @@ export default class Profile extends React.Component {
                                             name="email"
                                             onChange={this.handleChange.bind(this)}
                                         />
+                                        {this.validator.message('email', this.state.email, 'required|email')}
                                     </div>
                                 </div>
                             </div>
@@ -340,6 +344,7 @@ export default class Profile extends React.Component {
                                             name="firstName"
                                             onChange={this.handleChange.bind(this)}
                                         />
+                                        {this.validator.message('firstName', this.state.firstName, 'required|alpha')}
                                     </div>
                                 </div>
                                 <div className="col">
@@ -355,6 +360,7 @@ export default class Profile extends React.Component {
                                             name="lastName"
                                             onChange={this.handleChange.bind(this)}
                                         />
+                                        {this.validator.message('lastName', this.state.lastName, 'required|alpha')}
                                     </div>
                                 </div>
                             </div>
@@ -417,6 +423,7 @@ export default class Profile extends React.Component {
                                             name="password"
                                             onChange={this.handleChange.bind(this)}
                                         />
+                                        {this.validator.message('password', this.state.password, 'required')}
                                     </div>
                                 </div>
                             </div>
@@ -433,6 +440,7 @@ export default class Profile extends React.Component {
                                             name="npassword"
                                             onChange={this.handleChange.bind(this)}
                                         />
+                                        {this.validator.message('npassword', this.state.npassword, 'required')}
                                     </div>
                                 </div>
 
@@ -450,6 +458,7 @@ export default class Profile extends React.Component {
                                             name="cnpassword"
                                             onChange={this.handleChange.bind(this)}
                                         />
+                                        {this.validator.message('cnpassword', this.state.cnpassword, 'required')}
                                     </div>
                                 </div>
 
