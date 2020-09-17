@@ -15,7 +15,7 @@ export default class OneAp extends React.Component {
         }
     }
     checkAdmin() {
-        if (this.props.userName === "admin") {
+        if (this.props.admin === "admin") {
             return (
                 <button
                     type="button"

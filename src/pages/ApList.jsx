@@ -132,7 +132,7 @@ export default class ApList extends React.Component {
                                             status={a.stat}
                                             deleteFunction={this.deleteFunction.bind(this)}
                                             approveFunction={this.approveFunction.bind(this)}
-                                            admin={this.props.admin} />
+                                            admin={this.props.userName} />
                                     </div>
                                 )}
                             </div>
