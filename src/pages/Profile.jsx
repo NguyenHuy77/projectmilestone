@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Link } from "react-router-dom"
 import Appointment from './Appointment'
-import Calendar from './Calendar'
+import MyCalendar from './Calendar'
 import ApList from './ApList'
 import EditAppointment from './EditAppointment';
 import { Redirect } from 'react-router-dom';
@@ -255,7 +255,7 @@ export default class Profile extends React.Component {
                                                     </li>
                                                     
                                                 </ul>
-                                                <Calendar userName={this.state.user.userName} />
+                                                <MyCalendar userName={this.state.userName}  />
                                             </div>
 
                                         </div>
