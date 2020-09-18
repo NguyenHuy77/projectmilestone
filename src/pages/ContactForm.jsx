@@ -61,9 +61,9 @@ export default class ContactForm extends Component {
   }
   render() {
     return (
-      <main className="bg-dark page landing-page" style={{ paddingTop: '50px' }}>
-        <section className="bg-dark clean-block clean-info dark">
-          <div className="container bg-dark">
+      <main className="" style={{ paddingTop: '0px' }}>
+        <section className="">
+          <div className="">
             <div className="block-heading">
               <h2 className="text-monospace text-info">Contact Form</h2>
               <div className="container">
@@ -99,7 +99,7 @@ export default class ContactForm extends Component {
                     ></input>
                     <small id="emailHelp" class="form-text text-muted">
                       We'll never share your email with anyone else.
-          </small>
+                    </small>
                   </div>
                   <div class="form-group">
                     <label for="exampleFormControlTextarea1">
@@ -115,13 +115,15 @@ export default class ContactForm extends Component {
                       onChange={this.handleChange.bind(this)}
                     ></textarea>
                   </div>
-                  <div
-                    onClick={this.createData.bind(this)}
-                    class="contact-btn btn"
-                    style={{ position: 'absolute' }}
-                  >
-                    SEND MESSAGE
-            </div>
+                  <div class="form-group">
+                  <button
+                      onClick={this.createData.bind(this)}
+                      class="contact-btn btn"
+                      style={{ position: 'absolute' }}
+                    >
+                      SEND MESSAGE
+                  </button>
+                  </div>
                 </form>
               </div>
             </div>

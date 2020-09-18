@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ApList from './ApList'
+import Contact from './Contact'
 
 export default class Admin extends Component {
     constructor(props) {
@@ -19,6 +20,7 @@ export default class Admin extends Component {
                     </div>
                 </div>
                 <ApList admin ={"admin"}/>
+                <Contact/>
             </div>
         )
     }

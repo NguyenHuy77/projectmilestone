@@ -188,6 +188,7 @@ export default class RegisterChange extends React.Component {
                         </div>
                     </div>
                 </div>
+                <Contact/>
             </div>
         )
     }

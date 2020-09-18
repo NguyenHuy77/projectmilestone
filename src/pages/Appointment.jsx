@@ -112,14 +112,14 @@ export default class Appointment extends Component {
 
         var inputDate = new Date();
         
-        inputDate.setTime(this.state.meetingdate);
+        // inputDate.setTime(this.state.meetingdate);
         
         console.log(inputDate)
         var input = {
             id: uuidv4(),
             title: this.state.title,
             guest_name: this.props.guest_name,
-            meetingdate: inputDate.toString(),
+            meetingdate: this.state.meetingdate,
             meeting_user: this.state.meeting_user,
             stat: "OnProgress",
             note: this.state.note,
@@ -173,15 +173,13 @@ export default class Appointment extends Component {
 
                     <div className="form-group">
                         <h3>Meeting Date</h3>
-                        <DateTimePicker value={this.state.meetingdate}
-                            onChange={this.onChangeDate} disableClock/>
-                        {/* <input
+                        <input
                             type='date'
                             name='date'
                             value={this.state.meetingdate}
                             onChange={this.handleChangeMeetingDate.bind(this)}
                         />
-                        {this.validator.message('date', moment(this.state.meetingdate), ['required', { after_or_equal: moment() }, { before: moment().add(7, 'day') }])} */}
+                        {this.validator.message('date', moment(this.state.meetingdate), ['required', { after_or_equal: moment() }, { before: moment().add(7, 'day') }])}
                     </div>
                     <div className="form-group">
                         <h3>Meeting Person</h3>

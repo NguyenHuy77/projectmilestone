@@ -11,6 +11,7 @@ import { docClient } from './backend'
 import { parseMarker } from '@fullcalendar/core'
 import FeedbackList from './FeedbackList'
 import SimpleReactValidator from 'simple-react-validator'
+import Contact from './Contact'
 
 const myGet = 'https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/users'
 export default class Profile extends React.Component {
@@ -489,6 +490,7 @@ export default class Profile extends React.Component {
         return (
             <div>
                 {this.displayInfo()}
+                <Contact/>
             </div>
         )
     }

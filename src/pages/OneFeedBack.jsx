@@ -11,7 +11,8 @@ export default class OneFeedBack extends Component {
     
     render() {
         return (
-            <div class="card clean-card text-left" >
+            <div class="container" style={{margin: '5px'}}>
+                <div class="card clean-card text-left" >
                 {/* <img class="img-thumbnail card-img-top w-100 d-block"
                 src={this.props.avatar} style={{ width: '328px', height: '220px' }} /> */}
                 <div class="card-body" >                    
@@ -23,6 +24,8 @@ export default class OneFeedBack extends Component {
                     </div>
                 </div>
             </div>
+            </div>
+            
         )
     }
 }

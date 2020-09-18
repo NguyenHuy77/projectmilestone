@@ -34,7 +34,6 @@ function App() {
           <Route path ="/contactform" component ={ContactForm}/>
           <Route path ="/Admin" component ={Admin}/>
         </Switch>
-        <Contact/>
       </Router>
       {/* <RegisterChange/> */}
       

@@ -2,6 +2,9 @@ import React from 'react'
 import DateTimePicker from 'react-datetime-picker';
 import { docClient } from './backend'
 import SimpleReactValidator from 'simple-react-validator'
+import moment from 'moment'
+
+window.moment = moment
 
 const myPut = "https://5cb2d49e6ce9ce00145bef17.mockapi.io/api/v1/appointments"
 export default class EditAppointment extends React.Component {
@@ -174,11 +177,18 @@ export default class EditAppointment extends React.Component {
                     <div className="form-group">
                         <label htmlFor="date">Meeting Date</label>
                         <h3>Meeting Date</h3>
-                        <DateTimePicker value={this.state.oneApp.meetingdate}
-                            onChange={this.onChangeDate} />
+                        {/* <DateTimePicker value={this.state.oneApp.meetingdate}
+                            onChange={this.onChangeDate} /> */}
+                        <input
+                            type='date'
+                            name='date'
+                            value={this.state.meetingdate}
+                            onChange={this.handleChange.bind(this)}
+                        />
+                        {this.validator.message('date', moment(this.state.meetingdate), ['required', { after_or_equal: moment() }, { before: moment().add(7, 'day') }])}
                     </div>
                     <div className="form-group">
-                        <label htmlFor="meetingperson">Meeting Person</label>
+                        <h2>Meeting Person</h2>
                         <select name="meeting_user" onChange={this.handleChange.bind(this)}>
                             {this.state.teachers.map(e => {
                                 if (e.name === this.state.oneApp.meeting_user) {
@@ -246,7 +256,7 @@ export default class EditAppointment extends React.Component {
                             className="form-control"
                             placeholder={this.state.oneApp.note}
                             name="note"
-                            value={this.state.oneApp.status}
+                            value={this.state.oneApp.stat}
                             disabled
                         />
                     </div>
